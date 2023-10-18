@@ -1,13 +1,16 @@
-FROM raspbian/desktop
+FROM debian:10-slim
+
 LABEL image="blink"
 LABEL tag="latest"
 
 WORKDIR /home
 
-COPY requeriments.txt /home/
+RUN mkdir /home/logs && chmod 777 /home/logs
+
+RUN apt update && apt install -y build-essential python3-pip
+RUN pip3 install RPi.GPIO
+
 COPY blink.py /home/
 
-RUN sudo mkdir /home/logs && sudo chmod 777 /home/logs
-#RUN pip install -r /requeriments.txt
 
 CMD ["python3", "blink.py"]
