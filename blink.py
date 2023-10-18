@@ -3,14 +3,22 @@ import time
 import logging
 import os
 
+
+log_levels = {
+	"info": logging.INFO,
+	"warning": logging.WARNING,
+	"debug": logging.DEBUG
+}
+
 logging.basicConfig(
                     filename=os.getenv("LOG_FILE", "/home/lucas/projects/container-gpio/logs/local_blink.log"),
                     format='%(asctime)s, %(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
-                    level=os.getenv("LOGLEVEL", logging.INFO)
+                    level=log_levels.get(os.getenv("LOGLEVEL", "").lower(),
+                                         logging.INFO)
                    )
 
-led_pin = os.getenv("LEDPIN", 8)
+led_pin = int(os.getenv("LEDPIN", 8))
 
 
 logging.info("Start Board Setup")
@@ -33,7 +41,7 @@ try:
 	gpio.setup(led_pin, gpio.OUT, initial=gpio.LOW)
 
 	while True:
-		blink_interval = os.getenv("INTERVAL", 1)
+		blink_interval = int(os.getenv("INTERVAL", 1))
 		blink_led(pin=led_pin, interval=blink_interval)
 except KeyboardInterrupt:
 	logging.info("Closing blink_pin.py routine")
